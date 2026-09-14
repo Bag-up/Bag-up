@@ -1,0 +1,57 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Syne:wght@600;700;800&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #0D8F8F;
+  --color-primary-light: #14B8B8;
+  --color-primary-dark: #0A7070;
+  --color-primary-soft: #E6F7F7;
+  --color-secondary: #F7E300;
+  --color-accent: #F04A3A;
+  --color-accent-light: #FF6B5B;
+  --color-accent-soft: #FEE4E2;
+  --color-success: #10B981;
+  --color-success-soft: #ECFDF5;
+  --color-warning: #F59E0B;
+  --color-warning-soft: #FEF3C7;
+  --color-info: #6366F1;
+  --color-info-soft: #E0E7FF;
+  --color-background: #F8FAFB;
+  --color-surface: #FFFFFF;
+  --color-foreground: #111827;
+  --color-muted: #6B7280;
+  --color-muted-foreground: #9CA3AF;
+  --color-border: #E5E7EB;
+  --color-input: #E5E7EB;
+  --color-ring: #0D8F8F;
+  --color-sidebar: #FFFFFF;
+  --color-sidebar-foreground: #111827;
+  --color-sidebar-muted: #6B7280;
+  --color-sidebar-border: #E5E7EB;
+  --color-sidebar-accent: #E6F7F7;
+
+  --font-sans: 'DM Sans', system-ui, sans-serif;
+  --font-heading: 'Syne', system-ui, sans-serif;
+
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+}
+
+* {
+  border-color: var(--color-border);
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  background: var(--color-background);
+  color: var(--color-foreground);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+}

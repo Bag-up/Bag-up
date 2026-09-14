@@ -1,0 +1,995 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserRole {
+  client
+  provider
+  merchant
+  admin
+  assistant
+  manager
+}
+
+enum MissionStatus {
+  pending
+  accepted
+  en_route
+  picked_up
+  in_progress
+  delivered
+  cancelled
+  // Démarches administratives
+  dossier_deposed
+  admin_processing
+  document_ready
+  document_collected
+  returned_to_client
+}
+
+enum ServiceType {
+  colis
+  documents
+  courses
+  marchandises
+  objets_personnels
+  administratif
+  livraison_entreprise
+  depot_administratif
+  collecte_marchandises
+}
+
+enum UrgencyLevel {
+  standard
+  express
+  programme
+  groupe
+  prioritaire // legacy — conservé pour missions existantes
+}
+
+enum PaymentMethod {
+  orange_money
+  wave
+  free_money
+  card
+  /// Espèces remises directement au chauffeur (courses)
+  cash
+}
+
+enum PaymentStatus {
+  pending
+  processing
+  success
+  failed
+  refunded
+}
+
+enum SubscriptionStatus {
+  none
+  trial
+  active
+  expired
+  suspended
+}
+
+enum SubscriptionType {
+  registration
+  monthly
+  merchant_monthly
+}
+
+enum ConversationType {
+  mission
+  support
+}
+
+/// Course personnes (ride-hailing) — domaine séparé des missions livraison
+enum RideStatus {
+  searching
+  assigned
+  driver_en_route
+  driver_arrived
+  in_progress
+  completed
+  cancelled
+}
+
+/// Offre exclusive course → un chauffeur à la fois (cascade type Yango).
+enum RideOfferStatus {
+  pending
+  accepted
+  refused
+  expired
+  cancelled
+}
+
+model User {
+  id              String   @id @default(uuid())
+  phone           String
+  email           String?
+  password        String
+  firstName       String   @default("Mamadou")
+  lastName        String?
+  role            UserRole @default(client)
+  isActive        Boolean  @default(true)
+  avatarUrl       String?
+  address         String?
+  country         String?
+  // Provider / merchant KYC
+  isVerified      Boolean  @default(false)
+  /// Refus KYC après paiement — rembourse manuellement puis clear subscriptionRefundPending
+  kycRejectedAt   DateTime?
+  kycRejectReason String?
+  subscriptionRefundPending Boolean @default(false)
+  phoneVerified   Boolean  @default(false)
+  idCardUrl       String?
+  idCardBackUrl   String?
+  licenseUrl      String?
+  vehicleType     String?
+  zone            String?
+  serviceCategories String?
+  /// Honoraires démarches (hors frais officiels). Commission Bag'up 15 %.
+  demarchesServiceFee Int?
+  // Merchant (Anti-Gaspi / Marketplace)
+  businessName    String?
+  businessAddress String?
+  businessLat     Float?
+  businessLng     Float?
+  /// Canaux demandés : "antigaspi" | "marketplace" (vide = legacy → les deux)
+  merchantChannels String[] @default([])
+  rating          Float    @default(0)
+  totalRatings    Int      @default(0)
+  // Referral
+  referralCode    String?  @unique
+  referredBy      String?
+  credit          Int      @default(0)
+  /// Nombre d'activités terminées (missions + courses + Anti-Gaspi + marketplace sans mission)
+  loyaltyCompletedCount Int     @default(0)
+  /// Palier 1–5 (Ivoire → Gold)
+  loyaltyTier           Int     @default(1)
+  /// Clé YYYY-MM du dernier bon Gold mensuel
+  loyaltyGoldMonthKey   String?
+  // Provider availability
+  isAvailable     Boolean  @default(true)
+  /// Dernière position connue (matching courses séquentiel)
+  lastLat         Float?
+  lastLng         Float?
+  lastLocationAt  DateTime?
+  // Subscription
+  subscriptionStatus  SubscriptionStatus @default(none)
+  subscriptionExpiry  DateTime?
+  // Notifications
+  fcmToken        String?
+  // Vérification téléphone (OTP) et réinitialisation de mot de passe
+  otpCode         String?
+  otpExpiry       DateTime?
+  otpAttempts     Int      @default(0)
+  resetToken      String?
+  resetExpiry     DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  missions         Mission[] @relation("ClientMissions")
+  missionsProvided Mission[] @relation("ProviderMissions")
+  payments         Payment[]
+  ratingsGiven     Rating[]  @relation("RaterRatings")
+  ratingsReceived  Rating[]  @relation("RatedRatings")
+  subscriptions    Subscription[]
+  messagesSent     Message[]
+  clientConversations      Conversation[] @relation("ClientConversations")
+  providerConversations    Conversation[] @relation("ProviderConversations")
+  disputesRaised           Dispute[]
+  referralsMade            Referral[]     @relation("ReferrerReferrals")
+  referralsReceived        Referral[]     @relation("ReferredReferrals")
+  notifications            Notification[]
+  antiGaspiBaskets         AntiGaspiBasket[]
+  antiGaspiReservations    AntiGaspiReservation[] @relation("AntiGaspiClientReservations")
+  shopsOwned               Shop[]                 @relation("ShopOwner")
+  marketplaceOrders        MarketplaceOrder[]     @relation("MarketplaceBuyer")
+  vehicle                  ProviderVehicle?
+  ridesAsPassenger         Ride[]                 @relation("PassengerRides")
+  ridesAsDriver            Ride[]                 @relation("DriverRides")
+  rideOffers               RideOffer[]
+  loyaltyRewards           LoyaltyReward[]
+
+  @@unique([phone, role])
+}
+
+/// Course personnes (passager → chauffeur). Ne pas fusionner avec Mission livraison.
+model Ride {
+  id                   String     @id @default(uuid())
+  status               RideStatus @default(searching)
+  /// moto | voiture
+  vehicleMode          String
+  pickupAddress        String
+  dropoffAddress       String
+  pickupLat            String?
+  pickupLng            String?
+  dropoffLat           String?
+  dropoffLng           String?
+  estimatedPrice       Decimal
+  estimatedDistanceKm  Float?
+  estimatedDurationMin Int?
+  finalPrice           Decimal?
+  /// Montant à reverser au chauffeur (après paiement client)
+  providerAmount       Decimal?
+  payoutStatus         MissionPayoutStatus?
+  payoutEligibleAt     DateTime?
+  completedAt          DateTime?
+  passengerId          String
+  driverId             String?
+  driverLat            String?
+  driverLng            String?
+  /// Snapshot chauffeur / véhicule à l’acceptation (stable côté client)
+  driverName           String?
+  driverPhone          String?
+  driverRating         Float?
+  vehicleType          String?
+  vehiclePlate         String?
+  vehicleBrand         String?
+  vehicleModel         String?
+  vehicleColor         String?
+  assignedAt           DateTime?
+  cancelledAt          DateTime?
+  /// Chauffeur a confirmé avoir reçu le paiement cash du client
+  cashConfirmedAt      DateTime?
+  /// Passager a signalé « je suis ici » (prise en charge)
+  passengerReadyAt     DateTime?
+  passengerLat         String?
+  passengerLng         String?
+  /// Rang de l’offre en cours (1 = plus proche)
+  matchingRank         Int?
+  createdAt            DateTime   @default(now())
+  updatedAt            DateTime   @updatedAt
+
+  passenger User  @relation("PassengerRides", fields: [passengerId], references: [id])
+  driver    User? @relation("DriverRides", fields: [driverId], references: [id])
+  offers    RideOffer[]
+  payments  Payment[]
+  ratings   Rating[]
+
+  @@index([status, vehicleMode, createdAt])
+  @@index([passengerId, createdAt])
+  @@index([driverId, createdAt])
+  @@index([payoutStatus, payoutEligibleAt])
+}
+
+model RideOffer {
+  id          String          @id @default(uuid())
+  rideId      String
+  driverId    String
+  status      RideOfferStatus @default(pending)
+  /// 1 = premier (plus proche)
+  rank        Int
+  distanceKm  Float?
+  expiresAt   DateTime
+  respondedAt DateTime?
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  ride   Ride @relation(fields: [rideId], references: [id], onDelete: Cascade)
+  driver User @relation(fields: [driverId], references: [id], onDelete: Cascade)
+
+  @@index([rideId, status])
+  @@index([driverId, status])
+  @@index([status, expiresAt])
+  @@index([rideId, driverId])
+}
+
+/// Véhicule du prestataire (plaque visible au client uniquement après acceptation)
+model ProviderVehicle {
+  id         String    @id @default(uuid())
+  userId     String    @unique
+  type       String    // moto | voiture | velo
+  plate      String?
+  brand      String?
+  model      String?
+  color      String?
+  photoUrl   String?
+  verifiedAt DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Mission {
+  id              String        @id @default(uuid())
+  serviceType     ServiceType
+  urgency         UrgencyLevel  @default(standard)
+  pickupAddress   String
+  deliveryAddress String
+  description     String?
+  price           Decimal
+  /// Mode transport demandé par le client: moto | voiture (null = démarches / non applicable)
+  vehicleMode     String?
+  pickupLat       String?
+  pickupLng       String?
+  deliveryLat     String?
+  deliveryLng     String?
+  status          MissionStatus @default(pending)
+  // Photos / scans
+  photos          String?
+  // Démarches administratives
+  adminProcedureType String?
+  adminOrganism      String?
+  // Remboursement des frais administratifs sur justificatif (cf. CDC §14)
+  adminFeeEstimated  Int?     // frais administratifs estimés à la création
+  adminFeeActual     Int?     // frais réellement avancés par le prestataire
+  adminFeeReceiptUrl String?  // justificatif (reçu, timbre fiscal, etc.)
+  adminFeeReimbursed Boolean  @default(false)
+  // Remise à un tiers / GP (diaspora)
+  recipientName      String?
+  recipientPhone     String?
+  recipientRelation  String?
+  recipientAddress   String?
+  deliveryCode       String?
+  requiresIdVerification Boolean @default(false)
+  clientCountry      String?
+  // Détails spécifiques au type de service (JSON flexible)
+  serviceDetails     Json?
+  // Date/heure programmée (urgence = programme)
+  scheduledAt        DateTime?
+  /// Net dû au prestataire (prix − commission ; 0 % au lancement)
+  providerAmount     Decimal?
+  payoutStatus       MissionPayoutStatus?
+  payoutEligibleAt   DateTime?
+  paidOutAt          DateTime?
+  clientId        String
+  providerId      String?
+  providerLat     String?
+  providerLng     String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  client   User    @relation("ClientMissions", fields: [clientId], references: [id])
+  provider User?   @relation("ProviderMissions", fields: [providerId], references: [id])
+  payments Payment[]
+  ratings  Rating[]
+  conversation Conversation?
+  disputes Dispute[]
+  marketplaceOrder MarketplaceOrder?
+
+  @@index([payoutStatus, payoutEligibleAt])
+}
+
+model Payment {
+  id            String         @id @default(uuid())
+  amount        Decimal
+  method        PaymentMethod
+  status        PaymentStatus  @default(pending)
+  transactionId String?
+  // Passerelle de paiement utilisée : "bictorys" | "stripe" | "mock"
+  provider      String?
+  // Référence renvoyée par la passerelle (transactionId Bictorys / payment_intent Stripe)
+  providerRef   String?
+  // Devise du paiement (FCFA = XOF par défaut)
+  currency      String         @default("XOF")
+  // Dernier payload webhook reçu (audit / debug)
+  webhookPayload String?
+  userId        String
+  /// Mission livraison (optionnel si paiement Course)
+  missionId     String?
+  /// Course personnes (optionnel si paiement Mission)
+  rideId        String?
+  /// Bon fidélité appliqué (montant déjà déduit côté client)
+  loyaltyRewardId String?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  user    User     @relation(fields: [userId], references: [id])
+  mission Mission? @relation(fields: [missionId], references: [id])
+  ride    Ride?    @relation(fields: [rideId], references: [id])
+
+  @@index([providerRef])
+  @@index([rideId])
+}
+
+// Journal des webhooks de paiement reçus — garantit l'idempotence
+// (une même notification peut arriver plusieurs fois ; les passerelles retentent).
+model WebhookEvent {
+  id          String   @id @default(uuid())
+  provider    String
+  eventId     String
+  status      String
+  payload     String
+  processedAt DateTime @default(now())
+
+  @@unique([provider, eventId])
+}
+
+model Rating {
+  id          String   @id @default(uuid())
+  score       Int
+  comment     String?
+  raterId     String
+  ratedId     String
+  /// Mission livraison (optionnel si note Course)
+  missionId   String?
+  /// Course personnes (optionnel si note Mission)
+  rideId      String?
+  createdAt   DateTime @default(now())
+
+  rater   User     @relation("RaterRatings", fields: [raterId], references: [id])
+  rated   User     @relation("RatedRatings", fields: [ratedId], references: [id])
+  mission Mission? @relation(fields: [missionId], references: [id])
+  ride    Ride?    @relation(fields: [rideId], references: [id])
+
+  @@index([rideId])
+}
+
+model Subscription {
+  id            String           @id @default(uuid())
+  type          SubscriptionType
+  /// Montant net facturé (après crédit wallet)
+  amount        Decimal
+  /// Crédit parrainage consommé à la création
+  creditUsed    Int              @default(0)
+  status        PaymentStatus    @default(pending)
+  transactionId String?
+  // Passerelle de paiement (mêmes conventions que Payment)
+  provider      String?
+  providerRef   String?
+  currency      String           @default("XOF")
+  webhookPayload String?
+  startDate     DateTime         @default(now())
+  endDate       DateTime?
+  userId        String
+  createdAt     DateTime         @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([providerRef])
+}
+
+model Conversation {
+  id        String           @id @default(uuid())
+  type      ConversationType @default(mission)
+  missionId String?  @unique
+  clientId  String
+  providerId String
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+
+  mission  Mission?  @relation(fields: [missionId], references: [id])
+  client   User      @relation("ClientConversations", fields: [clientId], references: [id])
+  provider User      @relation("ProviderConversations", fields: [providerId], references: [id])
+  messages Message[]
+}
+
+model Message {
+  id              String   @id @default(uuid())
+  content         String
+  senderId        String
+  conversationId  String
+  imageUrl        String?
+  locationLat     Float?
+  locationLng     Float?
+  isRead          Boolean  @default(false)
+  createdAt       DateTime @default(now())
+
+  sender       User         @relation(fields: [senderId], references: [id])
+  conversation Conversation @relation(fields: [conversationId], references: [id])
+}
+
+enum DisputeStatus {
+  open
+  under_review
+  resolved
+  rejected
+  compensated
+}
+
+enum DisputeDecision {
+  warning
+  temporary_suspension
+  permanent_deactivation
+  none
+}
+
+model AdminProcedure {
+  id          String   @id @default(uuid())
+  name        String
+  category    String
+  organism    String
+  intervention String
+  estimatedFee Int     @default(0)
+  estimatedDelay String @default("")
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Dispute {
+  id          String        @id @default(uuid())
+  missionId   String
+  raisedById  String
+  reason      String
+  description String?
+  evidence    String?
+  status      DisputeStatus @default(open)
+  decision    DisputeDecision @default(none)
+  adminNotes  String?
+  resolvedAt  DateTime?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  mission  Mission @relation(fields: [missionId], references: [id])
+  raisedBy User    @relation(fields: [raisedById], references: [id])
+}
+
+enum NotificationType {
+  mission_accepted
+  status_update
+  new_message
+  payment_success
+  payment_failed
+  subscription_expiring
+  dispute_update
+  rating_reminder
+  loyalty
+  general
+}
+
+model Notification {
+  id        String           @id @default(uuid())
+  userId    String
+  type      NotificationType @default(general)
+  title     String
+  body      String
+  data      String?
+  isRead    Boolean          @default(false)
+  createdAt DateTime         @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model Referral {
+  id          String   @id @default(uuid())
+  referrerId  String
+  referredId  String
+  code        String   @unique
+  rewardType  String
+  rewardStatus String  @default("pending")
+  // Anti-fraude: empreintes d'unicité (cf. CDC §16)
+  fraudFlag   Boolean  @default(false)
+  deviceId    String?
+  ipAddress   String?
+  createdAt   DateTime @default(now())
+
+  referrer User @relation("ReferrerReferrals", fields: [referrerId], references: [id])
+  referred User @relation("ReferredReferrals", fields: [referredId], references: [id])
+}
+
+model Tariff {
+  id              String   @id @default(uuid())
+  baseFare        Int      @default(500)
+  perKm           Int      @default(200)
+  expressMultiplier Float  @default(1.5)
+  groupeMultiplier Float @default(0.8)
+  prioritaireMultiplier Float @default(1.25) // legacy
+  programmeMultiplier Float @default(0.9)
+  roundingFactor  Int      @default(50)
+  isActive        Boolean  @default(true)
+  updatedAt       DateTime @updatedAt
+}
+
+model InsuranceConfig {
+  id              String   @id @default(uuid())
+  partnerName     String   @default("")
+  partnerContact  String   @default("")
+  coveragePlafond Int      @default(0)
+  eligibilityMonths Int    @default(4)
+  sinistreProcedure String  @default("")
+  isActive        Boolean  @default(true)
+  updatedAt       DateTime @updatedAt
+}
+
+// =============================================================================
+// Anti-Gaspi (module indépendant — marketplace paniers invendus)
+// =============================================================================
+
+enum AntiGaspiBasketStatus {
+  available
+  reserved
+  sold
+  expired
+  cancelled
+}
+
+enum AntiGaspiReservationStatus {
+  pending_payment
+  paid
+  merchant_confirmed
+  client_confirmed
+  completed
+  cancelled
+  refunded
+  expired
+}
+
+enum AntiGaspiTxType {
+  payment
+  refund
+  payout
+}
+
+enum AntiGaspiTxStatus {
+  pending
+  processing
+  success
+  failed
+}
+
+enum AntiGaspiPayoutStatus {
+  pending
+  processing
+  success
+  failed
+}
+
+/// Paramètres Anti-Gaspi (commission, délais) — modifiables sans redeploy
+model AntiGaspiSettings {
+  id                    String   @id @default(uuid())
+  /// Taux de commission Bag'up (ex: 0.15 = 15 %)
+  commissionRate        Float    @default(0.15)
+  /// Délai avant expiration d'un panier non réservé (minutes) — 48 h
+  basketExpiryMinutes   Int      @default(2880)
+  /// Délai max pour payer après réservation (minutes)
+  paymentTimeoutMinutes Int      @default(15)
+  /// Max d'articles actifs (available + reserved) par commerçant
+  maxActiveBaskets      Int      @default(3)
+  /// Politique remboursement (texte libre / code)
+  refundPolicy          String   @default("auto_on_expiry")
+  isActive              Boolean  @default(true)
+  updatedAt             DateTime @updatedAt
+  createdAt             DateTime @default(now())
+}
+
+/// Panier invendu publié par un commerçant
+model AntiGaspiBasket {
+  id                  String                @id @default(uuid())
+  merchantId          String
+  title               String
+  description         String?
+  photoUrl            String?
+  /// Prix payé par le client (commission déduite dessus, jamais ajoutée)
+  price               Decimal
+  /// Commission figée à la publication (montant, pas le taux)
+  commissionAmount    Decimal
+  /// Net commerçant figé à la publication
+  merchantAmount      Decimal
+  commissionRateUsed  Float
+  pickupAddress       String
+  pickupLat           Float?
+  pickupLng           Float?
+  /// Créneau de retrait (début / fin)
+  pickupStartAt       DateTime
+  pickupEndAt         DateTime
+  /// V1: 1 panier = 1 réservation (quantity prévu pour V2)
+  quantity            Int                   @default(1)
+  /// Option livraison via mission Bag'up (V1.5) — désactivée par défaut en V1
+  deliveryRequested   Boolean               @default(false)
+  status              AntiGaspiBasketStatus @default(available)
+  expiresAt           DateTime
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+
+  merchant     User                   @relation(fields: [merchantId], references: [id])
+  reservations AntiGaspiReservation[]
+
+  @@index([status, expiresAt])
+  @@index([merchantId])
+  @@index([pickupLat, pickupLng])
+}
+
+/// Réservation d'un panier par un client
+model AntiGaspiReservation {
+  id                   String                     @id @default(uuid())
+  basketId             String
+  clientId             String
+  status               AntiGaspiReservationStatus @default(pending_payment)
+  /// Snapshot prix (même logique que le panier au moment de la résa)
+  price                Decimal
+  commissionAmount     Decimal
+  merchantAmount       Decimal
+  merchantConfirmedAt  DateTime?
+  clientConfirmedAt    DateTime?
+  /// Mission Bag'up créée si livraison demandée (V1.5)
+  missionId            String?
+  /// Cadeau fidélité (Bag'up paie le commerçant)
+  loyaltyRewardId      String?
+  expiresAt            DateTime?
+  createdAt            DateTime                   @default(now())
+  updatedAt            DateTime                   @updatedAt
+
+  basket       AntiGaspiBasket         @relation(fields: [basketId], references: [id])
+  client       User                    @relation("AntiGaspiClientReservations", fields: [clientId], references: [id])
+  transactions AntiGaspiTransaction[]
+  payout       AntiGaspiPayout?
+
+  @@index([status])
+  @@index([clientId])
+  @@index([basketId])
+}
+
+/// Historique paiements / remboursements Anti-Gaspi
+model AntiGaspiTransaction {
+  id            String            @id @default(uuid())
+  reservationId String
+  type          AntiGaspiTxType
+  amount        Decimal
+  method        PaymentMethod?
+  currency      String            @default("XOF")
+  /// "bictorys" | "stripe" | "mock"
+  provider      String?
+  providerRef   String?
+  status        AntiGaspiTxStatus @default(pending)
+  webhookPayload String?
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+
+  reservation AntiGaspiReservation @relation(fields: [reservationId], references: [id])
+
+  @@index([providerRef])
+  @@index([reservationId])
+}
+
+/// Reversement net au commerçant (après double confirmation)
+model AntiGaspiPayout {
+  id            String               @id @default(uuid())
+  reservationId String               @unique
+  merchantId    String
+  amount        Decimal
+  currency      String               @default("XOF")
+  provider      String?
+  providerRef   String?
+  status        AntiGaspiPayoutStatus @default(pending)
+  paidAt        DateTime?
+  createdAt     DateTime             @default(now())
+  updatedAt     DateTime             @updatedAt
+
+  reservation AntiGaspiReservation @relation(fields: [reservationId], references: [id])
+
+  @@index([merchantId])
+  @@index([status])
+}
+
+// ─── Marketplace Commerçants ────────────────────────────────────────────────
+
+enum ShopStatus {
+  draft
+  pending_review
+  active
+  suspended
+  hidden
+}
+
+enum ProductStatus {
+  draft
+  available
+  out_of_stock
+  archived
+}
+
+enum MarketplaceOrderStatus {
+  pending_payment
+  paid
+  awaiting_preparation
+  collection_scheduled
+  collected
+  in_transit
+  delivered
+  cancelled
+  dispute
+}
+
+enum MarketplacePayoutStatus {
+  held
+  eligible
+  paid_out
+  cancelled
+}
+
+/// Reversement gains prestataire (missions) — même cycle que marketplace
+enum MissionPayoutStatus {
+  held
+  eligible
+  paid_out
+  cancelled
+}
+
+model Shop {
+  id           String     @id @default(uuid())
+  ownerId      String
+  name         String
+  logoUrl      String?
+  coverUrl     String?
+  description  String
+  city         String     @default("Dakar")
+  region       String?
+  category     String
+  phone        String
+  whatsapp     String?
+  instagram    String?
+  facebook     String?
+  tiktok       String?
+  status       ShopStatus @default(draft)
+  avgRating    Float      @default(0)
+  ratingsCount Int        @default(0)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  owner    User               @relation("ShopOwner", fields: [ownerId], references: [id])
+  products Product[]
+  orders   MarketplaceOrder[]
+
+  @@index([status, city])
+  @@index([ownerId])
+}
+
+model Product {
+  id          String        @id @default(uuid())
+  shopId      String
+  name        String
+  priceXof    Decimal
+  description String
+  photoUrls   String[]
+  weightKg    Decimal
+  lengthCm    Decimal?
+  widthCm     Decimal?
+  heightCm    Decimal?
+  stock       Int           @default(0)
+  status      ProductStatus @default(draft)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  shop       Shop                   @relation(fields: [shopId], references: [id])
+  orderItems MarketplaceOrderItem[]
+
+  @@index([shopId, status])
+}
+
+model MarketplaceOrder {
+  id                  String                  @id @default(uuid())
+  orderNumber         String                  @unique
+  buyerId             String
+  shopId              String
+  status              MarketplaceOrderStatus  @default(pending_payment)
+  productTotalXof     Decimal
+  deliveryFeeXof      Decimal
+  totalXof            Decimal
+  commissionRate      Decimal                 @default(5)
+  commissionAmount    Decimal
+  merchantAmount      Decimal
+  currencyDisplay     String?
+  fxRate              Decimal?
+  fxMarginPercent     Decimal?
+  totalDisplay        Decimal?
+  payoutStatus        MarketplacePayoutStatus @default(held)
+  payoutEligibleAt    DateTime?
+  paidOutAt           DateTime?
+  missionId           String?                 @unique
+  pickupAddress       String
+  pickupLat           Float?
+  pickupLng           Float?
+  deliveryAddress     String
+  deliveryLat         Float?
+  deliveryLng         Float?
+  deliveryCountry     String?
+  /// true = livré au client acheteur ; false = tiers / diaspora
+  deliverToSelf       Boolean                 @default(true)
+  /// pickup_store | bagup_courier | merchant_courier | handoff_sn
+  deliveryMode        String                  @default("bagup_courier")
+  recipientName       String?
+  recipientPhone      String?
+  recipientRelation   String?
+  preparationDeadline DateTime?
+  paidAt              DateTime?
+  deliveredAt         DateTime?
+  cancelledAt         DateTime?
+  cancelReason        String?
+  paymentId           String?
+  createdAt           DateTime                @default(now())
+  updatedAt           DateTime                @updatedAt
+
+  buyer   User                    @relation("MarketplaceBuyer", fields: [buyerId], references: [id])
+  shop    Shop                    @relation(fields: [shopId], references: [id])
+  mission Mission?                @relation(fields: [missionId], references: [id])
+  items   MarketplaceOrderItem[]
+
+  @@index([buyerId, status])
+  @@index([shopId, status])
+  @@index([payoutStatus, payoutEligibleAt])
+}
+
+model MarketplaceOrderItem {
+  id           String  @id @default(uuid())
+  orderId      String
+  productId    String
+  productName  String
+  unitPriceXof Decimal
+  quantity     Int     @default(1)
+  weightKg     Decimal
+
+  order   MarketplaceOrder @relation(fields: [orderId], references: [id])
+  product Product          @relation(fields: [productId], references: [id])
+
+  @@index([orderId])
+}
+
+model MarketplacePromo {
+  id         String    @id @default(uuid())
+  title      String
+  subtitle   String?
+  imageUrl   String?
+  ctaLabel   String    @default("Découvrir")
+  linkType   String    @default("market_home") // market_home | shop | product | url | none
+  linkTarget String?
+  sortOrder  Int       @default(0)
+  isActive   Boolean   @default(true)
+  startsAt   DateTime?
+  endsAt     DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  @@index([isActive, sortOrder])
+}
+
+enum LoyaltyRewardType {
+  voucher
+  antigaspi_gift
+}
+
+enum LoyaltyRewardStatus {
+  available
+  used
+  expired
+}
+
+/// Récompense du programme fidélité (bon FCFA ou panier Anti-Gaspi offert)
+model LoyaltyReward {
+  id         String              @id @default(uuid())
+  userId     String
+  type       LoyaltyRewardType
+  status     LoyaltyRewardStatus @default(available)
+  /// FCFA : valeur du bon, ou plafond du panier offert
+  amount     Int
+  tier       Int
+  /// level_up | gold_monthly
+  source     String
+  expiresAt  DateTime?
+  usedAt     DateTime?
+  usedOnType String?
+  usedOnId   String?
+  createdAt  DateTime            @default(now())
+  updatedAt  DateTime            @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, status])
+  @@index([userId, type, source, tier])
+}
+
+model HomeBanner {
+  id         String    @id @default(uuid())
+  badge      String?
+  headline   String
+  subtitle   String?
+  imageUrl   String?
+  ctaLabel   String    @default("Voir")
+  linkType   String    @default("antigaspi") // antigaspi | market | url | none
+  linkTarget String?
+  sortOrder  Int       @default(0)
+  isActive   Boolean   @default(true)
+  startsAt   DateTime?
+  endsAt     DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  @@index([isActive, sortOrder])
+}

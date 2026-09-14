@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Attestation cession PI — Bag’up</title>
+  <style>
+    @page { size: A4; margin: 14mm; }
+    body {
+      font-family: Georgia, 'Times New Roman', serif;
+      color: #111; font-size: 12px; line-height: 1.5; margin: 0;
+    }
+    h1 { font-size: 17px; text-align: center; margin: 0 0 4px; }
+    .sub { text-align: center; color: #555; margin: 0 0 12px; font-size: 11px; }
+    h2 {
+      font-size: 12.5px; margin: 12px 0 5px; color: #0A7070;
+      break-after: avoid; page-break-after: avoid;
+    }
+    p { margin: 0 0 6px; orphans: 3; widows: 3; }
+    ol, ul { padding-left: 18px; margin: 4px 0 8px; }
+    li { margin: 2px 0; }
+    .box {
+      border: 1px solid #D1D5DB; padding: 8px 10px; border-radius: 8px;
+      margin: 6px 0; background: #FAFAFA;
+    }
+    /* Garde articles finaux + signatures ensemble (évite une page signatures seules) */
+    .closing { break-inside: avoid; page-break-inside: avoid; }
+    .sign {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px;
+    }
+    .sign > div {
+      border: 1px solid #D1D5DB; border-radius: 8px; padding: 10px; min-height: 90px;
+    }
+    .line { border-bottom: 1px solid #9CA3AF; height: 28px; margin-top: 14px; }
+    .sig-img { display: block; height: 52px; width: auto; margin: 6px 0 2px; object-fit: contain; }
+    .foot { margin-top: 12px; font-size: 10px; color: #6B7280; text-align: center; }
+  </style>
+</head>
+<body>
+  <h1>Attestation de cession des droits de propriété intellectuelle</h1>
+  <p class="sub">Projet Bag’up · À signer · Deux exemplaires &nbsp;|&nbsp; Date : ____ / ____ / 2026</p>
+
+  <div class="box">
+    <strong>Cédant (Prestataire)</strong><br/>
+    Nom / raison sociale : <strong>El Hadji DIENG</strong><br/>
+    Email : el.elhadji.dieng@gmail.com<br/>
+    Représenté par : <strong>El Hadji DIENG</strong>
+  </div>
+  <div class="box">
+    <strong>Cessionnaire (Client)</strong><br/>
+    Nom / raison sociale : ________________________________<br/>
+    Email de référence projet : <strong>lanternelabel@gmail.com</strong><br/>
+    Représenté par : ________________________________
+  </div>
+
+  <h2>Article 1 — Objet</h2>
+  <p>Le Cédant cède au Cessionnaire, qui accepte, l’ensemble des droits de propriété intellectuelle portant sur les créations réalisées dans le cadre du projet <strong>Bag’up</strong>, notamment :</p>
+  <ol>
+    <li>Le code source de l’application mobile (Android / iOS)</li>
+    <li>Le code source du backend / API et du back-office d’administration</li>
+    <li>Les scripts d’infrastructure et de déploiement fournis</li>
+    <li>Les créations graphiques, logos, maquettes et assets livrés dans le dossier de restitution</li>
+    <li>La documentation technique et fonctionnelle remise</li>
+  </ol>
+  <p>à l’exclusion des composants open source tiers et des services SaaS (Expo, Hostinger, Google, Apple, Bictorys, etc.) qui restent régis par leurs licences / contrats respectifs.</p>
+
+  <h2>Article 2 — Étendue de la cession</h2>
+  <p>La cession est consentie à titre <strong>exclusif</strong>, pour le monde entier, pour toute la durée légale de protection des droits, et pour tous modes d’exploitation connus ou à venir : reproduction, représentation, adaptation, traduction, distribution, commercialisation, maintenance et évolution.</p>
+
+  <h2>Article 3 — Contrepartie</h2>
+  <p>La présente cession intervient en exécution du contrat de prestation et des paiements déjà effectués / prévus entre les parties, sans redevance supplémentaire sauf accord écrit contraire.</p>
+
+  <h2>Article 4 — Garanties</h2>
+  <p>Le Cédant déclare :</p>
+  <ul>
+    <li>être titulaire des droits cédés ou dûment habilité à les céder ;</li>
+    <li>que les livrables ne portent pas atteinte, à sa connaissance, aux droits des tiers ;</li>
+    <li>avoir remis ou s’engager à remettre les éléments listés dans le dossier de restitution (code, docs, accès sous lanternelabel@gmail.com, exception Expo notée).</li>
+  </ul>
+
+  <div class="closing">
+  <h2>Article 5 — Comptes et accès</h2>
+  <p>Les parties reconnaissent que la majorité des accès d’exploitation ont été configurés pour transparence sous <strong>lanternelabel@gmail.com</strong>, à l’exception du compte <strong>Expo / EAS</strong> (el.elhadji.dieng@gmail.com), dont le transfert ou le partage owner sera finalisé au bénéfice du Client.</p>
+
+  <h2>Article 6 — Loi applicable</h2>
+  <p>Droit sénégalais. Tout litige sera soumis aux juridictions compétentes du ressort du siège du Client, sauf accord amiable préalable.</p>
+
+  <p>Fait à _______________, le ____ / ____ / 2026, en deux exemplaires.</p>
+
+  <div class="sign">
+    <div>
+      <strong>Cédant (Prestataire)</strong><br/>
+      Nom : <strong>El Hadji DIENG</strong>
+      <img class="sig-img" src="../assets/signature_el_hadji_dieng.png" alt="Signature El Hadji DIENG" />
+      <span style="font-size:10px;color:#666">Signature</span>
+    </div>
+    <div><strong>Cessionnaire (Client)</strong><br/>Nom :<div class="line"></div><span style="font-size:10px;color:#666">Signature</span></div>
+  </div>
+  <p class="foot">Bag’up — Attestation de cession PI · Modèle à faire relire par un conseil juridique si besoin</p>
+  </div>
+</body>
+</html>

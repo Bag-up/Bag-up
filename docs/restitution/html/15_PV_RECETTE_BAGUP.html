@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>PV de recette — Bag’up</title>
+  <style>
+    @page { size: A4; margin: 14mm; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      color: #111; font-size: 11.5px; line-height: 1.5; margin: 0;
+    }
+    h1 { font-size: 18px; margin: 0 0 4px; color: #0A7070; }
+    .sub { color: #6B7280; margin: 0 0 12px; font-size: 11px; }
+    h2 {
+      font-size: 13px; margin: 14px 0 6px; color: #0A7070;
+      border-bottom: 1px solid #E5E7EB; padding-bottom: 3px;
+      break-after: avoid; page-break-after: avoid;
+    }
+    p { margin: 0 0 6px; orphans: 3; widows: 3; }
+    table {
+      width: 100%; border-collapse: collapse; margin: 6px 0 10px; font-size: 10.5px;
+      break-inside: avoid; page-break-inside: avoid;
+    }
+    th, td { border: 1px solid #E5E7EB; padding: 7px 8px; vertical-align: top; }
+    th { background: #E6F7F7; color: #0A7070; }
+    .meta {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+      margin: 8px 0 14px; padding: 10px 12px; background: #F8FAFB;
+      border-radius: 8px; border: 1px solid #E5E7EB;
+    }
+    .sign {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px;
+      break-inside: avoid; page-break-inside: avoid;
+    }
+    .sign > div {
+      border: 1px solid #D1D5DB; border-radius: 8px; padding: 12px;
+      min-height: 100px; background: #FAFAFA;
+    }
+    .line { border-bottom: 1px solid #9CA3AF; height: 28px; margin-top: 16px; }
+    .sig-img { display: block; height: 52px; width: auto; margin: 6px 0 2px; object-fit: contain; }
+    .foot { margin-top: 14px; font-size: 10px; color: #6B7280; text-align: center; }
+  </style>
+</head>
+<body>
+  <h1>Procès-verbal de recette — Application Bag’up</h1>
+  <p class="sub">Annexe Article 4 · Document à signer</p>
+
+  <div class="meta">
+    <div><strong>Version</strong><br/>1.0.23</div>
+    <div><strong>Date</strong><br/>____ / ____ / 2026</div>
+    <div><strong>Client</strong><br/>lanternelabel@gmail.com</div>
+    <div><strong>Prestataire</strong><br/>El Hadji DIENG<br/>el.elhadji.dieng@gmail.com</div>
+  </div>
+
+  <h2>1. Objet</h2>
+  <p>Le présent procès-verbal constate la recette fonctionnelle de l’application Bag’up livrée conformément au cahier des charges et aux avenants validés, sous réserve des anomalies listées en annexe.</p>
+
+  <h2>2. Périmètre recetté</h2>
+  <table>
+    <tr><th>Domaine</th><th>Résultat</th></tr>
+    <tr><td>Authentification OTP / multi-espaces</td><td>☐ OK &nbsp; ☐ KO &nbsp; ☐ Partiel</td></tr>
+    <tr><td>Espace Client (demandes, suivi, paiement)</td><td>☐ OK &nbsp; ☐ KO &nbsp; ☐ Partiel</td></tr>
+    <tr><td>Courses moto/voiture</td><td>☐ OK &nbsp; ☐ KO &nbsp; ☐ Partiel</td></tr>
+    <tr><td>Démarches administratives</td><td>☐ OK &nbsp; ☐ KO &nbsp; ☐ Partiel</td></tr>
+    <tr><td>Espace Prestataire (KYC, missions)</td><td>☐ OK &nbsp; ☐ KO &nbsp; ☐ Partiel</td></tr>
+    <tr><td>Marketplace / Anti-Gaspi</td><td>☐ OK &nbsp; ☐ KO &nbsp; ☐ Partiel</td></tr>
+    <tr><td>Paiements (Wave / OM / carte)</td><td>☐ OK &nbsp; ☐ KO &nbsp; ☐ Partiel</td></tr>
+    <tr><td>Back-office admin</td><td>☐ OK &nbsp; ☐ KO &nbsp; ☐ Partiel</td></tr>
+    <tr><td>Publication stores (Play / Apple)</td><td>☐ OK &nbsp; ☐ KO &nbsp; ☐ Partiel</td></tr>
+    <tr><td>Hébergement prod (VPS / DNS / SSL)</td><td>☐ OK &nbsp; ☐ KO &nbsp; ☐ Partiel</td></tr>
+  </table>
+
+  <h2>3. Environnements de test</h2>
+  <table>
+    <tr><th>Élément</th><th>Valeur</th></tr>
+    <tr><td>App Android</td><td>sn.bagup.app — Play internal / prod</td></tr>
+    <tr><td>App iOS</td><td>App ID 6793175800 — TestFlight / store</td></tr>
+    <tr><td>Admin</td><td>https://admin.bagup.app</td></tr>
+    <tr><td>API</td><td>https://admin.bagup.app/api</td></tr>
+  </table>
+
+  <h2>4. Décision de recette</h2>
+  <p>☐ <strong>Recette définitive</strong> — aucune réserve bloquante</p>
+  <p>☐ <strong>Recette avec réserves</strong> — anomalies non bloquantes listées ci-dessous</p>
+  <p>☐ <strong>Recette refusée</strong> — anomalies bloquantes à corriger</p>
+
+  <h2>5. Annexe — Registre des bugs / points connus</h2>
+  <table>
+    <tr><th>ID</th><th>Module</th><th>Description</th><th>Gravité</th><th>Statut</th></tr>
+    <tr><td>B-01</td><td>Course / adresses</td><td>Suggestions lieux : correctif OTA publié (v1.0.23) — à revalider</td><td>Moyenne</td><td>☐ Ouvert ☐ Corrigé</td></tr>
+    <tr><td>B-02</td><td>Mise à jour app</td><td>Popup store / OTA selon version installée</td><td>Basse</td><td>☐ Ouvert ☐ Surveillé</td></tr>
+    <tr><td>B-03</td><td></td><td></td><td></td><td></td></tr>
+    <tr><td>B-04</td><td></td><td></td><td></td><td></td></tr>
+  </table>
+  <p><em>Compléter librement lors de la séance de recette.</em></p>
+
+  <h2>6. Comptes de test remis</h2>
+  <p>Voir document <strong>16 — Comptes et données de test</strong> (identifiants transmis via lanternelabel).</p>
+
+  <h2>7. Signatures</h2>
+  <div class="sign">
+    <div>
+      <strong>Client</strong> (lanternelabel@gmail.com)<br/>Nom :
+      <div class="line"></div>
+      <span style="font-size:10px;color:#6B7280">Signature &nbsp; Date : ____ / ____ / ______</span>
+    </div>
+    <div>
+      <strong>Prestataire</strong><br/>Nom : <strong>El Hadji DIENG</strong>
+      <img class="sig-img" src="../assets/signature_el_hadji_dieng.png" alt="Signature El Hadji DIENG" />
+      <span style="font-size:10px;color:#6B7280">Signature &nbsp; Date : ____ / ____ / ______</span>
+    </div>
+  </div>
+  <p class="foot">Bag’up — PV de recette</p>
+</body>
+</html>

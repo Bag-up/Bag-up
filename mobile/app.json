@@ -1,0 +1,173 @@
+{
+  "expo": {
+    "name": "Bag'up",
+    "slug": "bagup",
+    "version": "1.0.23",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "scheme": "bagup",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": false,
+    "primaryColor": "#0D8F8F",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0D8F8F"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "sn.bagup.app",
+      "buildNumber": "1",
+      "infoPlist": {
+        "CFBundleDisplayName": "Bag'up",
+        "LSApplicationQueriesSchemes": [
+          "tel",
+          "mailto",
+          "whatsapp",
+          "itms-apps",
+          "market"
+        ],
+        "UIBackgroundModes": [
+          "remote-notification"
+        ]
+      },
+      "config": {
+        "usesNonExemptEncryption": false,
+        "googleMapsApiKey": "AIzaSyCEP2CFaBOmY3PTXa5GNJMtLSP5pxAAI28"
+      },
+      "entitlements": {
+        "aps-environment": "production"
+      },
+      "privacyManifests": {
+        "NSPrivacyAccessedAPITypes": [
+          {
+            "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryUserDefaults",
+            "NSPrivacyAccessedAPITypeReasons": [
+              "CA92.1"
+            ]
+          },
+          {
+            "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryFileTimestamp",
+            "NSPrivacyAccessedAPITypeReasons": [
+              "C617.1"
+            ]
+          },
+          {
+            "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryDiskSpace",
+            "NSPrivacyAccessedAPITypeReasons": [
+              "E174.1"
+            ]
+          },
+          {
+            "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategorySystemBootTime",
+            "NSPrivacyAccessedAPITypeReasons": [
+              "35F9.1"
+            ]
+          }
+        ]
+      }
+    },
+    "android": {
+      "package": "sn.bagup.app",
+      "versionCode": 1,
+      "softwareKeyboardLayoutMode": "resize",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0D8F8F"
+      },
+      "edgeToEdgeEnabled": false,
+      "predictiveBackGestureEnabled": false,
+      "permissions": [
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION",
+        "CAMERA",
+        "POST_NOTIFICATIONS",
+        "VIBRATE",
+        "RECEIVE_BOOT_COMPLETED"
+      ],
+      "blockedPermissions": [
+        "android.permission.READ_MEDIA_IMAGES",
+        "android.permission.READ_MEDIA_VIDEO",
+        "android.permission.READ_MEDIA_VISUAL_USER_SELECTED",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.SYSTEM_ALERT_WINDOW"
+      ],
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            {
+              "scheme": "bagup"
+            }
+          ],
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
+        }
+      ],
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyB4ZzStzHqkSuHeQ2Ae-Wup1Z64BhTF7uQ"
+        }
+      },
+      "usesCleartextTraffic": false,
+      "googleServicesFile": "./google-services.json"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-font",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#0D8F8F",
+          "image": "./assets/splash-icon.png",
+          "imageWidth": 200
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Bag'up utilise votre position pour trouver des missions proches et suivre les livraisons.",
+          "isIosBackgroundLocationEnabled": false,
+          "isAndroidBackgroundLocationEnabled": false
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Bag'up accède à vos photos pour envoyer pièces d'identité, permis et photos de mission.",
+          "cameraPermission": "Bag'up utilise la caméra pour photographier vos documents et preuves de livraison."
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/icon.png",
+          "color": "#0D8F8F",
+          "sounds": [],
+          "mode": "production"
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "95532cf1-dc32-4900-a117-6e00b86df008"
+      }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "enabled": true,
+      "checkAutomatically": "ON_LOAD",
+      "fallbackToCacheTimeout": 0,
+      "url": "https://u.expo.dev/95532cf1-dc32-4900-a117-6e00b86df008"
+    }
+  }
+}

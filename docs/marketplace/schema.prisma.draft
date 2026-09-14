@@ -1,0 +1,149 @@
+// DRAFT — ne pas merger avant Phase 1
+// À intégrer dans bagup-backend/prisma/schema.prisma
+// Voir docs/marketplace/SCHEMA.md pour le contexte
+
+enum ShopStatus {
+  draft
+  pending_review
+  active
+  suspended
+  hidden
+}
+
+enum ProductStatus {
+  draft
+  available
+  out_of_stock
+  archived
+}
+
+enum MarketplaceOrderStatus {
+  pending_payment
+  paid
+  awaiting_preparation
+  collection_scheduled
+  collected
+  in_transit
+  delivered
+  cancelled
+  dispute
+}
+
+enum MarketplacePayoutStatus {
+  held
+  eligible
+  paid_out
+  cancelled
+}
+
+// Étendre SubscriptionType existant :
+// enum SubscriptionType { registration monthly merchant_monthly }
+
+model Shop {
+  id           String     @id @default(uuid())
+  ownerId      String
+  name         String
+  logoUrl      String?
+  coverUrl     String?
+  description  String
+  city         String
+  region       String?
+  category     String
+  phone        String
+  whatsapp     String?
+  status       ShopStatus @default(draft)
+  avgRating    Float      @default(0)
+  ratingsCount Int        @default(0)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  owner    User               @relation("ShopOwner", fields: [ownerId], references: [id])
+  products Product[]
+  orders   MarketplaceOrder[]
+
+  @@index([status, city])
+  @@index([ownerId])
+}
+
+model Product {
+  id          String        @id @default(uuid())
+  shopId      String
+  name        String
+  priceXof    Decimal
+  description String
+  photoUrls   String[]
+  weightKg    Decimal
+  lengthCm    Decimal?
+  widthCm     Decimal?
+  heightCm    Decimal?
+  stock       Int           @default(0)
+  status      ProductStatus @default(draft)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  shop       Shop                    @relation(fields: [shopId], references: [id])
+  orderItems MarketplaceOrderItem[]
+
+  @@index([shopId, status])
+}
+
+model MarketplaceOrder {
+  id                  String                  @id @default(uuid())
+  orderNumber         String                  @unique
+  buyerId             String
+  shopId              String
+  status              MarketplaceOrderStatus  @default(pending_payment)
+  productTotalXof     Decimal
+  deliveryFeeXof      Decimal
+  totalXof            Decimal
+  commissionRate      Decimal                 @default(5)
+  commissionAmount    Decimal
+  merchantAmount      Decimal
+  currencyDisplay     String?
+  fxRate              Decimal?
+  fxMarginPercent     Decimal?
+  totalDisplay        Decimal?
+  payoutStatus        MarketplacePayoutStatus @default(held)
+  payoutEligibleAt    DateTime?
+  paidOutAt           DateTime?
+  missionId           String?                 @unique
+  pickupAddress       String
+  pickupLat           Float?
+  pickupLng           Float?
+  deliveryAddress     String
+  deliveryLat         Float?
+  deliveryLng         Float?
+  deliveryCountry     String?
+  preparationDeadline DateTime?
+  paidAt              DateTime?
+  deliveredAt         DateTime?
+  cancelledAt         DateTime?
+  cancelReason        String?
+  paymentId           String?
+  createdAt           DateTime                @default(now())
+  updatedAt           DateTime                @updatedAt
+
+  buyer   User                    @relation("MarketplaceBuyer", fields: [buyerId], references: [id])
+  shop    Shop                    @relation(fields: [shopId], references: [id])
+  mission Mission?                @relation(fields: [missionId], references: [id])
+  items   MarketplaceOrderItem[]
+
+  @@index([buyerId, status])
+  @@index([shopId, status])
+  @@index([payoutStatus, payoutEligibleAt])
+}
+
+model MarketplaceOrderItem {
+  id           String   @id @default(uuid())
+  orderId      String
+  productId    String
+  productName  String
+  unitPriceXof Decimal
+  quantity     Int      @default(1)
+  weightKg     Decimal
+
+  order   MarketplaceOrder @relation(fields: [orderId], references: [id])
+  product Product          @relation(fields: [productId], references: [id])
+
+  @@index([orderId])
+}

@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Dossier de restitution des livrables — Bag'up</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Syne:wght@600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --primary: #0D8F8F; --primary-dark: #0A7070; --primary-soft: #E6F7F7;
+      --ink: #111827; --muted: #6B7280; --line: #E5E7EB; --bg: #F8FAFB; --white: #FFFFFF;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    @page { size: A4; margin: 12mm; }
+    body {
+      font-family: 'DM Sans', system-ui, sans-serif; color: var(--ink); background: #e8eef0;
+      font-size: 11px; line-height: 1.45;
+      -webkit-print-color-adjust: exact; print-color-adjust: exact;
+    }
+    h1,h2,h3 { font-family: 'Syne', sans-serif; letter-spacing: -0.02em; line-height: 1.2; }
+    .sheet {
+      width: 210mm; min-height: 297mm; margin: 14px auto; background: var(--white);
+      padding: 14mm 12mm 12mm; box-shadow: 0 8px 28px rgba(17,24,39,.08);
+    }
+    @media print {
+      body { background: #fff; }
+      .sheet { margin: 0; box-shadow: none; width: auto; min-height: auto; padding: 0; }
+      .no-print { display: none !important; }
+    }
+    /* Évite les pages quasi vides sans serrer le texte */
+    h2, h3 { break-after: avoid-page; page-break-after: avoid; }
+    table, .note, .warn, .usb, .sign { break-inside: avoid; page-break-inside: avoid; }
+    p, li { orphans: 3; widows: 3; }
+    .keep-with-next { break-after: avoid-page; page-break-after: avoid; }
+    .toolbar {
+      position: sticky; top: 0; z-index: 5; display: flex; gap: 10px; justify-content: center;
+      align-items: center; padding: 10px; background: var(--primary); color: #fff; font-size: 13px;
+    }
+    .toolbar button {
+      background: #fff; color: var(--primary); border: 0; border-radius: 8px;
+      padding: 8px 14px; font-weight: 700; cursor: pointer;
+    }
+    .eyebrow {
+      display: inline-block; font-size: 9px; font-weight: 700; letter-spacing: .08em;
+      text-transform: uppercase; color: var(--primary); background: var(--primary-soft);
+      padding: 3px 8px; border-radius: 999px; margin-bottom: 8px;
+    }
+    .title { font-size: 24px; margin-bottom: 4px; }
+    .subtitle { color: var(--muted); font-size: 12px; max-width: 560px; }
+    .meta {
+      margin-top: 14px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+      border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; background: var(--bg);
+    }
+    .meta dt { font-size: 9px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); font-weight: 700; }
+    .meta dd { font-weight: 600; margin-top: 1px; font-size: 11.5px; }
+    .hr { height: 1px; background: var(--line); margin: 14px 0; }
+    h2 { font-size: 14px; color: var(--primary-dark); margin: 0 0 6px; }
+    h3 { font-size: 12px; margin: 10px 0 4px; }
+    p, li { color: #374151; }
+    ul { padding-left: 16px; margin: 4px 0 8px; }
+    .note {
+      background: var(--primary-soft); border-left: 3px solid var(--primary);
+      padding: 8px 10px; border-radius: 0 8px 8px 0; margin: 8px 0 12px; font-size: 10.5px;
+    }
+    .warn {
+      background: #FFF7ED; border-left: 3px solid #EA580C;
+      padding: 8px 10px; border-radius: 0 8px 8px 0; margin: 8px 0 12px; font-size: 10.5px;
+    }
+    table { width: 100%; border-collapse: collapse; margin: 6px 0 10px; font-size: 10px; }
+    th, td { border: 1px solid var(--line); padding: 6px 7px; vertical-align: top; text-align: left; }
+    th { background: var(--primary-soft); color: var(--primary-dark); font-weight: 700; }
+    .check { width: 48px; text-align: center; white-space: nowrap; }
+    .box {
+      display: inline-block; width: 11px; height: 11px; border: 1.5px solid #9CA3AF;
+      border-radius: 2px; vertical-align: middle;
+    }
+    .box.on { background: var(--primary); border-color: var(--primary); }
+    .tag {
+      display: inline-block; font-size: 8.5px; font-weight: 700; padding: 1px 5px;
+      border-radius: 999px; margin-right: 3px;
+    }
+    .tag-ok { background: #D1FAE5; color: #065F46; }
+    .tag-usb { background: #DBEAFE; color: #1E40AF; }
+    .tag-mail { background: #FCE7F3; color: #9D174D; }
+    .tag-expo { background: #FEF3C7; color: #92400E; }
+    .usb {
+      border: 1.5px dashed var(--primary); background: linear-gradient(180deg,#F0FDFA,#fff);
+      border-radius: 10px; padding: 10px 12px; margin: 8px 0 12px;
+    }
+    .tree { font-family: ui-monospace, Menlo, monospace; font-size: 9.5px; line-height: 1.5; color: #1F2937; }
+    .sign { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 14px; }
+    .sign-box {
+      border: 1px solid var(--line); border-radius: 10px; padding: 10px; min-height: 110px; background: var(--bg);
+    }
+    .line { margin-top: 16px; border-bottom: 1px solid #9CA3AF; height: 24px; }
+    .sig-img { display: block; height: 52px; width: auto; margin: 8px 0 2px; object-fit: contain; }
+    .footer {
+      margin-top: 14px; padding-top: 8px; border-top: 1px solid var(--line);
+      color: var(--muted); font-size: 9.5px; display: flex; justify-content: space-between;
+    }
+    code { font-family: ui-monospace, Menlo, monospace; font-size: 9.5px; background: #F3F4F6; padding: 0 3px; border-radius: 3px; }
+  </style>
+</head>
+<body>
+  <div class="toolbar no-print">
+    <span>Dossier restitution Bag’up — lanternelabel@gmail.com</span>
+    <button onclick="window.print()">Imprimer / PDF</button>
+  </div>
+
+  <div class="sheet">
+    <div class="eyebrow">Annexe contractuelle · Article 4 · Restitution</div>
+    <h1 class="title">Dossier de restitution des livrables</h1>
+    <p class="subtitle">
+      Application <strong>Bag’up</strong>. Document de remise au Client. Principe de transparence :
+      la majorité des accès d’exploitation sont rattachés à <strong>lanternelabel@gmail.com</strong>.
+    </p>
+
+    <dl class="meta">
+      <div><dt>Projet</dt><dd>Bag’up — Mobile + API + Admin</dd></div>
+      <div><dt>Version</dt><dd>1.0.23 (Android / iOS)</dd></div>
+      <div><dt>Compte Client / transparence</dt><dd>lanternelabel@gmail.com</dd></div>
+      <div><dt>Prestataire (Expo)</dt><dd>el.elhadji.dieng@gmail.com</dd></div>
+      <div><dt>Support code source</dt><dd>Clé USB + dépôts Git</dd></div>
+      <div><dt>Date de restitution</dt><dd>____ / ____ / 2026</dd></div>
+    </dl>
+
+    <div class="note">
+      <strong>Principe retenu :</strong> hébergeur, VPS, domaines, DNS, SSL, Play Store, App Store,
+      paiements, Maps, push et secrets ont été configurés / centralisés pour le Client sous
+      <strong>lanternelabel@gmail.com</strong>. Seul <strong>Expo / EAS</strong> reste sur le mail perso du prestataire
+      (<code>el.elhadji.dieng@gmail.com</code>) — à partager ou transférer.
+    </div>
+
+    <h2>1. Contenu de la clé USB</h2>
+    <div class="usb">
+      <div class="tree">
+BAGUP_RESTITUTION/<br>
+├── 00_DOSSIER_RESTITUTION.pdf<br>
+├── 01_CODE_SOURCE/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(mobile + backend/admin, sans .env Git)<br>
+├── 02_DOCUMENTATION/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(CDC, docs/, manuels, PV, attestations)<br>
+├── 03_DESIGN_ASSETS/<br>
+├── 04_BASE_DE_DONNEES/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(schema + migrations ± dump)<br>
+└── 05_COMPTES_TEST/
+      </div>
+    </div>
+
+    <h2>2. Checklist de restitution</h2>
+    <table>
+      <thead>
+        <tr>
+          <th style="width:26px">N°</th>
+          <th>Livrable</th>
+          <th class="check">Remis</th>
+          <th class="check">N/A</th>
+          <th>Mode / observations</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>Code source mobile + historique Git</td>
+          <td class="check"><span class="box on"></span></td>
+          <td class="check"><span class="box"></span></td>
+          <td><span class="tag tag-usb">USB</span> Bag-Up-App-Mobile — v1.0.23</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>Transfert propriété dépôts Git au Client</td>
+          <td class="check"><span class="box on"></span></td>
+          <td class="check"><span class="box"></span></td>
+          <td><span class="tag tag-mail">lanternelabel@gmail.com</span> owner / accès dépôts</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>Code source backend/API + admin</td>
+          <td class="check"><span class="box on"></span></td>
+          <td class="check"><span class="box"></span></td>
+          <td><span class="tag tag-usb">USB</span> Bag-Up-backend-admin</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>Keystore Android (.jks) + mots de passe</td>
+          <td class="check"><span class="box on"></span></td>
+          <td class="check"><span class="box"></span></td>
+          <td><span class="tag tag-ok">Remis</span> via EAS / transmission sécurisée côté lanterne</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td>Google Play Console (propriétaire)</td>
+          <td class="check"><span class="box on"></span></td>
+          <td class="check"><span class="box"></span></td>
+          <td><span class="tag tag-mail">lanternelabel@gmail.com</span> sn.bagup.app</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td>Apple App Store / App Store Connect</td>
+          <td class="check"><span class="box on"></span></td>
+          <td class="check"><span class="box"></span></td>
+          <td><span class="tag tag-mail">lanternelabel@gmail.com</span> accès compte + App ID 6793175800</td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td>Export BDD prod + accès admin DB</td>
+          <td class="check"><span class="box on"></span></td>
+          <td class="check"><span class="box"></span></td>
+          <td><span class="tag tag-mail">lanterne</span> hébergeur / VPS / dump</td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td>Schéma BDD + migrations</td>
+          <td class="check"><span class="box on"></span></td>
+          <td class="check"><span class="box"></span></td>
+          <td><span class="tag tag-usb">USB</span> prisma/schema + migrations</td>
+        </tr>
+        <tr>
+          <td>9</td>
+          <td>Hébergement, domaines, DNS, SSL</td>
+          <td class="check"><span class="box on"></span></td>
+          <td class="check"><span class="box"></span></td>
+          <td><span class="tag tag-mail">lanternelabel@gmail.com</span> Hostinger + DNS</td>
+        </tr>
+        <tr>
+          <td>10</td>
+          <td>Services tiers (paiements, Maps, push, Expo…)</td>
+          <td class="check"><span class="box on"></span></td>
+          <td class="check"><span class="box"></span></td>
+          <td>Tout sous lanterne sauf <span class="tag tag-expo">Expo → el.elhadji.dieng@gmail.com</span></td>
+        </tr>
+        <tr>
+          <td>11</td>
+          <td>Identifiants, clés API, fichiers .env</td>
+          <td class="check"><span class="box on"></span></td>
+          <td class="check"><span class="box"></span></td>
+          <td><span class="tag tag-mail">mail lanterne</span> + USB sécurisée — <strong>pas sur GitHub</strong></td>
+        </tr>
+        <tr>
+          <td>12</td>
+          <td>Design, maquettes, logos, assets</td>
+          <td class="check"><span class="box on"></span></td>
+          <td class="check"><span class="box"></span></td>
+          <td><span class="tag tag-usb">USB</span> 03_DESIGN_ASSETS</td>
+        </tr>
+        <tr>
+          <td>13</td>
+          <td>Documentation technique</td>
+          <td class="check"><span class="box on"></span></td>
+          <td class="check"><span class="box"></span></td>
+          <td><span class="tag tag-usb">USB</span> docs/ + CDC</td>
+        </tr>
+        <tr>
+          <td>14</td>
+          <td>Manuel utilisateur + manuel d’administration</td>
+          <td class="check"><span class="box on"></span></td>
+          <td class="check"><span class="box"></span></td>
+          <td><span class="tag tag-ok">Remis</span> docs/restitution/MANUEL_*.md</td>
+        </tr>
+        <tr>
+          <td>15</td>
+          <td>PV de recette, tests, registre bugs</td>
+          <td class="check"><span class="box on"></span></td>
+          <td class="check"><span class="box"></span></td>
+          <td><span class="tag tag-ok">Remis</span> PV_RECETTE_BAGUP.md (à signer)</td>
+        </tr>
+        <tr>
+          <td>16</td>
+          <td>Comptes et données de test</td>
+          <td class="check"><span class="box on"></span></td>
+          <td class="check"><span class="box"></span></td>
+          <td><span class="tag tag-ok">Remis</span> modèle + ids via mail lanterne</td>
+        </tr>
+        <tr>
+          <td>17</td>
+          <td>Documents contractuels (CDC, devis…)</td>
+          <td class="check"><span class="box on"></span></td>
+          <td class="check"><span class="box"></span></td>
+          <td><span class="tag tag-usb">USB</span> + échanges déjà partagés</td>
+        </tr>
+        <tr>
+          <td>18</td>
+          <td>Attestation de cession des droits de PI</td>
+          <td class="check"><span class="box on"></span></td>
+          <td class="check"><span class="box"></span></td>
+          <td><span class="tag tag-ok">À signer</span> ATTESTATION_CESSION_PI_BAGUP.md</td>
+        </tr>
+        <tr>
+          <td>19</td>
+          <td>Attestation de suppression des copies</td>
+          <td class="check"><span class="box on"></span></td>
+          <td class="check"><span class="box"></span></td>
+          <td><span class="tag tag-ok">À signer</span> ATTESTATION_SUPPRESSION_COPIES_BAGUP.md</td>
+        </tr>
+      </tbody>
+    </table>
+
+    
+    <h2>3. Cartographie des accès (transparence Client)</h2>
+    <table>
+      <thead>
+        <tr><th>Accès</th><th>Compte</th><th>Statut</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>GitHub (dépôts)</td><td>lanternelabel@gmail.com</td><td>Client / restitution</td></tr>
+        <tr><td>Google Play Console</td><td>lanternelabel@gmail.com</td><td>Client</td></tr>
+        <tr><td>App Store Connect / Apple</td><td>lanternelabel@gmail.com</td><td>Client</td></tr>
+        <tr><td>Hébergeur VPS / panel</td><td>lanternelabel@gmail.com</td><td>Client</td></tr>
+        <tr><td>Domaines / DNS / SSL</td><td>lanternelabel@gmail.com</td><td>Client</td></tr>
+        <tr><td>BDD PostgreSQL prod</td><td>via VPS lanterne</td><td>Client</td></tr>
+        <tr><td>Paiements (Bictorys / Wave / OM)</td><td>lanternelabel@gmail.com</td><td>Client</td></tr>
+        <tr><td>Google Maps / Places</td><td>lanternelabel@gmail.com</td><td>Client</td></tr>
+        <tr><td>Firebase / push (si actif)</td><td>lanternelabel@gmail.com</td><td>Client</td></tr>
+        <tr><td>.env / secrets</td><td>mail lanterne (+ USB chiffrée)</td><td><strong>Hors GitHub</strong></td></tr>
+        <tr><td>Expo / EAS (builds, OTA, keystore)</td><td>el.elhadji.dieng@gmail.com</td><td>Exception — à aligner Client</td></tr>
+      </tbody>
+    </table>
+
+    <div class="warn">
+      <strong>Point d’attention Expo :</strong> le seul compte encore sur le mail perso du prestataire est Expo/EAS.
+      Pour une autonomie totale du Client, inviter <code>lanternelabel@gmail.com</code> en owner du projet
+      <code>@elbambiste/bagup</code> (ou transférer le projet), puis exporter le keystore Android.
+    </div>
+
+    <h2>4. Documents joints (dossier docs/restitution)</h2>
+    <ul>
+      <li><code>MANUEL_UTILISATEUR_BAGUP.md</code> — mode d’emploi Client / Prestataire / Commerçant</li>
+      <li><code>MANUEL_ADMINISTRATION_BAGUP.md</code> — back-office, VPS, stores, secrets</li>
+      <li><code>PV_RECETTE_BAGUP.md</code> — procès-verbal + registre bugs</li>
+      <li><code>COMPTES_ET_DONNEES_TEST.md</code> — trame comptes test</li>
+      <li><code>ATTESTATION_CESSION_PI_BAGUP.md</code> — cession des droits</li>
+      <li><code>ATTESTATION_SUPPRESSION_COPIES_BAGUP.md</code> — engagement prestataire</li>
+    </ul>
+
+    <h2>5. Ce que signifie « Manuel utilisateur / admin »</h2>
+    <p>
+      Ce n’est pas un secret technique : c’est le <strong>guide d’usage</strong> de l’app (pour les utilisateurs)
+      et le <strong>guide d’exploitation</strong> du back-office / serveur (pour Lanterne / l’équipe Client).
+      Les deux documents ont été rédigés avec vos infos (comptes lanterne, exception Expo, stores, VPS).
+    </p>
+
+    <h2>6. Accusé de réception</h2>
+    <p>
+      Les parties reconnaissent que les livrables ci-dessus sont remis selon le principe de transparence
+      sous <strong>lanternelabel@gmail.com</strong>, sous réserve de la finalisation éventuelle du partage Expo/EAS
+      et de la signature des attestations 18 et 19.
+    </p>
+
+    <div class="sign">
+      <div class="sign-box">
+        <strong>Prestataire</strong><br>
+        Email : el.elhadji.dieng@gmail.com<br>
+        Nom : <strong>El Hadji DIENG</strong><br>
+        Date : ____ / ____ / ______
+        <img class="sig-img" src="restitution/assets/signature_el_hadji_dieng.png" alt="Signature El Hadji DIENG" />
+        <span style="font-size:9px;color:#6B7280">Signature</span>
+      </div>
+      <div class="sign-box">
+        <strong>Client</strong><br>
+        Email : lanternelabel@gmail.com<br>
+        Nom : ____________________________<br>
+        Date : ____ / ____ / ______
+        <div class="line"></div>
+        <span style="font-size:9px;color:#6B7280">Signature</span>
+      </div>
+    </div>
+
+    <div class="footer">
+      <span>Bag’up — Dossier de restitution des livrables</span>
+      <span>Confidentiel — usage contractuel</span>
+    </div>
+  </div>
+</body>
+</html>

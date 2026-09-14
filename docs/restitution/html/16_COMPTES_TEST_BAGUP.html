@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Comptes test — Bag’up</title>
+  <style>
+    @page { size: A4; margin: 14mm; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 11.5px; line-height: 1.5; margin: 0; color: #111;
+    }
+    h1 { font-size: 18px; color: #0A7070; margin: 0 0 4px; }
+    .sub { color: #6B7280; margin: 0 0 12px; font-size: 11px; }
+    h2 {
+      font-size: 13px; margin: 14px 0 6px; color: #0A7070;
+      break-after: avoid; page-break-after: avoid;
+    }
+    table {
+      width: 100%; border-collapse: collapse; margin: 6px 0 12px; font-size: 10.5px;
+      break-inside: avoid; page-break-inside: avoid;
+    }
+    th, td { border: 1px solid #E5E7EB; padding: 8px; vertical-align: top; height: 28px; }
+    th { background: #E6F7F7; color: #0A7070; }
+    .note {
+      background: #FFF7ED; border-left: 3px solid #EA580C;
+      padding: 8px 10px; margin: 8px 0 12px; border-radius: 0 8px 8px 0;
+    }
+    .sign {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 14px;
+      break-inside: avoid; page-break-inside: avoid;
+    }
+    .sign > div {
+      border: 1px solid #D1D5DB; border-radius: 8px; padding: 12px; min-height: 90px;
+    }
+    .line { border-bottom: 1px solid #9CA3AF; height: 28px; margin-top: 16px; }
+    .sig-img { display: block; height: 52px; width: auto; margin: 6px 0 2px; object-fit: contain; }
+  </style>
+</head>
+<body>
+  <h1>Comptes et données de test — Bag’up</h1>
+  <p class="sub">Transmission via lanternelabel@gmail.com · À parapher / signer</p>
+  <div class="note">Ne pas committer de mots de passe réels sur GitHub. Secrets uniquement via mail lanterne / canal sécurisé.</div>
+
+  <h2>1. Comptes à renseigner</h2>
+  <table>
+    <tr><th>Rôle</th><th>Téléphone / email</th><th>Mot de passe / OTP</th><th>Notes</th></tr>
+    <tr><td>Admin back-office</td><td></td><td></td><td>https://admin.bagup.app</td></tr>
+    <tr><td>Client test Dakar</td><td></td><td></td><td>Courses + livraisons</td></tr>
+    <tr><td>Prestataire moto vérifié</td><td></td><td></td><td>Adhésion payée + KYC OK</td></tr>
+    <tr><td>Prestataire démarches</td><td></td><td></td><td>Type « Démarches »</td></tr>
+    <tr><td>Commerçant / Anti-Gaspi</td><td></td><td></td><td>Si activé</td></tr>
+  </table>
+
+  <h2>2. Jeux de données utiles</h2>
+  <table>
+    <tr><th>Donnée</th><th>Exemple</th><th>Usage</th></tr>
+    <tr><td>Adresse départ</td><td>Dakar Plateau</td><td>Course / livraison</td></tr>
+    <tr><td>Adresse arrivée</td><td>Almadies / Parcelles</td><td>Course / livraison</td></tr>
+    <tr><td>Plaque test</td><td>DK-1234-AB</td><td>Inscription prestataire</td></tr>
+    <tr><td>Procédure démarches</td><td>Extrait de naissance</td><td>Parcours démarches</td></tr>
+  </table>
+
+  <h2>3. Accusé de remise</h2>
+  <p>☐ Comptes de test remis au Client</p>
+  <p>☐ Mots de passe transmis uniquement via canal sécurisé (mail lanterne / coffre)</p>
+  <p>Date : ____ / ____ / 2026</p>
+  <div class="sign">
+    <div>
+      <strong>Remis par (Prestataire)</strong><br/>
+      Nom : <strong>El Hadji DIENG</strong>
+      <img class="sig-img" src="../assets/signature_el_hadji_dieng.png" alt="Signature El Hadji DIENG" />
+    </div>
+    <div><strong>Reçu par (Client)</strong><div class="line"></div>Nom :</div>
+  </div>
+</body>
+</html>

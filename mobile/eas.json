@@ -1,0 +1,104 @@
+{
+  "cli": {
+    "version": ">= 16.0.0",
+    "appVersionSource": "remote"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "ios": {
+        "simulator": true
+      },
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "APP_ENV": "development"
+      }
+    },
+    "preview": {
+      "distribution": "internal",
+      "channel": "preview",
+      "ios": {
+        "simulator": false
+      },
+      "android": {
+        "buildType": "apk",
+        "gradleCommand": ":app:assembleRelease"
+      },
+      "env": {
+        "APP_ENV": "preview",
+        "EXPO_PUBLIC_MARKETPLACE_ENABLED": "false",
+        "EXPO_PUBLIC_API_URL": "https://admin.bagup.app/api",
+        "GOOGLE_MAPS_ANDROID_API_KEY": "AIzaSyB4ZzStzHqkSuHeQ2Ae-Wup1Z64BhTF7uQ",
+        "GOOGLE_MAPS_IOS_API_KEY": "AIzaSyCEP2CFaBOmY3PTXa5GNJMtLSP5pxAAI28",
+        "EXPO_PUBLIC_GOOGLE_MAPS_WEB_API_KEY": "AIzaSyDCAuH4krqMcNW8rq3byuFr73nQEjdETmY",
+        "EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY": "pk_live_51TZBiXJxjy14qzZqkbVKxXx6jRw75vaqJdY2TOaAVMYiStGfl533O6ONVBUOTKiaRqFulOK7u8pHRDQ2bpv7aWXZ005BetDDgx"
+      }
+    },
+    "pilot-marketplace": {
+      "extends": "preview",
+      "distribution": "internal",
+      "channel": "preview",
+      "ios": {
+        "simulator": false
+      },
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "APP_ENV": "pilot-marketplace",
+        "EXPO_PUBLIC_MARKETPLACE_ENABLED": "true",
+        "EXPO_PUBLIC_API_URL": "https://admin.bagup.app/api",
+        "GOOGLE_MAPS_ANDROID_API_KEY": "AIzaSyB4ZzStzHqkSuHeQ2Ae-Wup1Z64BhTF7uQ",
+        "GOOGLE_MAPS_IOS_API_KEY": "AIzaSyCEP2CFaBOmY3PTXa5GNJMtLSP5pxAAI28",
+        "EXPO_PUBLIC_GOOGLE_MAPS_WEB_API_KEY": "AIzaSyDCAuH4krqMcNW8rq3byuFr73nQEjdETmY",
+        "EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY": "pk_live_51TZBiXJxjy14qzZqkbVKxXx6jRw75vaqJdY2TOaAVMYiStGfl533O6ONVBUOTKiaRqFulOK7u8pHRDQ2bpv7aWXZ005BetDDgx"
+      }
+    },
+    "crash-test": {
+      "distribution": "internal",
+      "channel": "preview",
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "APP_ENV": "crash-test",
+        "EXPO_PUBLIC_CRASH_TEST": "1"
+      }
+    },
+    "production": {
+      "autoIncrement": true,
+      "channel": "production",
+      "ios": {
+        "resourceClass": "m-medium"
+      },
+      "android": {
+        "buildType": "app-bundle"
+      },
+      "env": {
+        "APP_ENV": "production",
+        "EXPO_PUBLIC_MARKETPLACE_ENABLED": "true",
+        "EXPO_PUBLIC_API_URL": "https://admin.bagup.app/api",
+        "GOOGLE_MAPS_ANDROID_API_KEY": "AIzaSyB4ZzStzHqkSuHeQ2Ae-Wup1Z64BhTF7uQ",
+        "GOOGLE_MAPS_IOS_API_KEY": "AIzaSyCEP2CFaBOmY3PTXa5GNJMtLSP5pxAAI28",
+        "EXPO_PUBLIC_GOOGLE_MAPS_WEB_API_KEY": "AIzaSyDCAuH4krqMcNW8rq3byuFr73nQEjdETmY",
+        "EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY": "pk_live_51TZBiXJxjy14qzZqkbVKxXx6jRw75vaqJdY2TOaAVMYiStGfl533O6ONVBUOTKiaRqFulOK7u8pHRDQ2bpv7aWXZ005BetDDgx"
+      }
+    }
+  },
+  "submit": {
+    "production": {
+      "ios": {
+        "ascAppId": "6793175800",
+        "appleTeamId": "WBVCJF7928"
+      },
+      "android": {
+        "serviceAccountKeyPath": "../mobile/eas-submit-bagup.json",
+        "track": "internal",
+        "releaseStatus": "completed"
+      }
+    }
+  }
+}

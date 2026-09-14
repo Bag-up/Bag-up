@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Manuel utilisateur — Bag’up</title>
+  <style>
+    @page { size: A4; margin: 14mm; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 11.5px; line-height: 1.5; color: #111; margin: 0;
+      max-width: 190mm;
+    }
+    h1 { font-size: 20px; color: #0A7070; margin: 0 0 6px; }
+    .meta { color: #4B5563; margin: 0 0 14px; font-size: 11px; }
+    h2 {
+      font-size: 14px; color: #0A7070; margin: 16px 0 6px;
+      border-bottom: 1px solid #E5E7EB; padding-bottom: 3px;
+      break-after: avoid; page-break-after: avoid;
+    }
+    h3 { font-size: 12px; margin: 10px 0 4px; break-after: avoid; page-break-after: avoid; }
+    p, li { margin: 0 0 4px; orphans: 3; widows: 3; }
+    ul, ol { padding-left: 18px; margin: 4px 0 10px; }
+    hr { border: 0; border-top: 1px solid #E5E7EB; margin: 12px 0; }
+    .foot { margin-top: 18px; font-size: 10px; color: #6B7280; }
+  </style>
+</head>
+<body>
+  <h1>Manuel utilisateur — Application Bag’up</h1>
+  <p class="meta">
+    <strong>Version app :</strong> 1.0.23<br/>
+    <strong>Public :</strong> Clients, Prestataires, Commerçants<br/>
+    <strong>Compte de référence projet :</strong> lanternelabel@gmail.com
+  </p>
+
+  <h2>1. Présentation</h2>
+  <p>Bag’up met en relation des clients avec des prestataires pour :</p>
+  <ul>
+    <li>Collecte et livraison</li>
+    <li>Courses (moto / voiture)</li>
+    <li>Démarches administratives</li>
+    <li>Marketplace / Anti-Gaspi (selon activation)</li>
+  </ul>
+  <p><strong>Téléchargement</strong></p>
+  <ul>
+    <li>Android : Google Play (<code>sn.bagup.app</code>)</li>
+    <li>iOS : App Store / TestFlight</li>
+  </ul>
+
+  <h2>2. Création de compte</h2>
+  <ol>
+    <li>Ouvrir Bag’up</li>
+    <li>Choisir le pays / indicatif</li>
+    <li>Saisir le numéro de téléphone</li>
+    <li>Valider le code OTP SMS</li>
+    <li>Choisir l’espace :
+      <ul>
+        <li><strong>Client</strong></li>
+        <li><strong>Prestataire</strong> (livraison / courses / démarches)</li>
+        <li><strong>Commerçant</strong> (boutique / Anti-Gaspi)</li>
+      </ul>
+    </li>
+  </ol>
+  <p>Un même numéro peut ouvrir plusieurs espaces.</p>
+
+  <h3>Prestataire — inscription</h3>
+  <ul>
+    <li>Photo de profil obligatoire</li>
+    <li>Type : Courses &amp; livraisons <strong>ou</strong> Démarches</li>
+    <li>Véhicule : Moto / Voiture / Vélo (si applicable)</li>
+    <li>Pièces d’identité</li>
+    <li>Paiement d’adhésion puis validation admin</li>
+  </ul>
+
+  <h3>Client</h3>
+  <ul>
+    <li>Profil simple, puis accès immédiat aux services</li>
+  </ul>
+
+  <h2>3. Espace Client</h2>
+  <h3>3.1 Demande de collecte / livraison / démarches</h3>
+  <ol>
+    <li>Accueil → créer une demande</li>
+    <li>Renseigner retrait + livraison (ou lieux liés aux démarches)</li>
+    <li>Choisir urgence / détails</li>
+    <li>Voir le prix estimatif</li>
+    <li>Commander et payer selon le parcours affiché</li>
+  </ol>
+
+  <h3>3.2 Course (personnes)</h3>
+  <ol>
+    <li>Accueil → <strong>Course</strong></li>
+    <li>Départ (géolocalisation possible)</li>
+    <li>Destination (saisie + suggestions de lieux)</li>
+    <li>Choisir Moto ou Voiture</li>
+    <li>Voir le prix → <strong>Commander</strong></li>
+    <li>Suivre le chauffeur sur la carte</li>
+  </ol>
+  <p>Astuce : coller des coordonnées GPS / lien Maps peut remplir automatiquement la destination.</p>
+
+  <h3>3.3 Suivi &amp; notation</h3>
+  <ul>
+    <li>Statuts de mission / course visibles dans l’historique</li>
+    <li>Après livraison : noter le prestataire</li>
+  </ul>
+
+  <h3>3.4 Paiement</h3>
+  <p>Modes disponibles selon configuration : Wave, Orange Money, Free Money, carte (passerelle Bictorys / Stripe).</p>
+
+  <h2>4. Espace Prestataire</h2>
+  <ol>
+    <li>Se connecter sur l’espace Prestataire</li>
+    <li>Être <strong>payé + vérifié</strong> pour recevoir des missions</li>
+    <li>Accepter / refuser les demandes</li>
+    <li>Mettre à jour le statut (en route, arrivé, terminé)</li>
+    <li>Consulter gains et abonnement</li>
+  </ol>
+  <p><strong>Démarches uniquement :</strong> inscription sans véhicule, catalogue de procédures côté client.</p>
+
+  <h2>5. Espace Commerçant / Anti-Gaspi</h2>
+  <ol>
+    <li>Créer / gérer la boutique</li>
+    <li>Publier des offres</li>
+    <li>Suivre les commandes</li>
+    <li>Respecter l’abonnement / validation admin si demandé</li>
+  </ol>
+
+  <h2>6. Notifications &amp; compte</h2>
+  <ul>
+    <li>Notifications push selon paramètres téléphone</li>
+    <li>Profil : photo, infos, documents</li>
+    <li>Support : contacter l’équipe via les canaux communiqués par Bag’up</li>
+  </ul>
+
+  <h2>7. Mise à jour de l’application</h2>
+  <p>Si une mise à jour est proposée :</p>
+  <ol>
+    <li>Ouvrir le popup <strong>Mise à jour disponible</strong></li>
+    <li><strong>Installer maintenant</strong> (OTA) ou ouvrir le store</li>
+    <li>Rouvrir l’app après installation</li>
+  </ol>
+
+  <p class="foot">Document remis dans le cadre de la restitution Bag’up — septembre 2026</p>
+</body>
+</html>

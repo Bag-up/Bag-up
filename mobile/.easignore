@@ -1,0 +1,12 @@
+# Google Play service account (EAS Submit) — ne jamais committer
+google-service-account.json
+
+# Firebase Admin SDK — ne jamais committer
+*-firebase-adminsdk-*.json
+firebase-service-account.json
+GoogleService-Info.plist
+
+# Credentials locales EAS / keystores
+credentials/
+*.jks
+*.keystore

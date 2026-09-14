@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Attestation suppression copies — Bag’up</title>
+  <style>
+    @page { size: A4; margin: 14mm; }
+    body {
+      font-family: Georgia, 'Times New Roman', serif;
+      color: #111; font-size: 12px; line-height: 1.55; margin: 0;
+    }
+    h1 { font-size: 17px; text-align: center; margin: 0 0 4px; }
+    .sub { text-align: center; color: #555; margin: 0 0 14px; font-size: 11px; }
+    h2 {
+      font-size: 12.5px; margin: 14px 0 6px; color: #0A7070;
+      break-after: avoid; page-break-after: avoid;
+    }
+    p, li { margin: 0 0 6px; orphans: 3; widows: 3; }
+    ol, ul { padding-left: 18px; margin: 4px 0 10px; }
+    .box {
+      border: 1px solid #D1D5DB; padding: 10px 12px; border-radius: 8px;
+      margin: 8px 0; background: #FAFAFA;
+      break-inside: avoid; page-break-inside: avoid;
+    }
+    .sign-block {
+      margin-top: 18px; border: 1px solid #D1D5DB; border-radius: 8px;
+      padding: 14px; max-width: 360px;
+      break-inside: avoid; page-break-inside: avoid;
+    }
+    .line { border-bottom: 1px solid #9CA3AF; height: 36px; margin-top: 16px; max-width: 300px; }
+    .sig-img { display: block; height: 56px; width: auto; margin: 8px 0 4px; object-fit: contain; }
+    .foot { margin-top: 16px; font-size: 10px; color: #6B7280; text-align: center; }
+  </style>
+</head>
+<body>
+  <h1>Attestation sur l’honneur de suppression des copies</h1>
+  <p class="sub">Projet Bag’up · À signer par le Prestataire &nbsp;|&nbsp; Date : ____ / ____ / 2026</p>
+
+  <div class="box">
+    <strong>Déclarant</strong><br/>
+    Je soussigné(e) : <strong>El Hadji DIENG</strong><br/>
+    Email : <strong>el.elhadji.dieng@gmail.com</strong><br/>
+    Agissant en qualité de prestataire / développeur du projet Bag’up,
+  </div>
+
+  <h2>Déclare sur l’honneur</h2>
+  <ol>
+    <li>Avoir remis au Client (référence <strong>lanternelabel@gmail.com</strong>) les livrables prévus : code source (clé USB / dépôts), documentation, et éléments d’accès d’exploitation listés au dossier de restitution.</li>
+    <li>Qu’après cette remise, je procéderai / j’ai procédé à la <strong>suppression</strong> de mes copies locales et cloud des éléments suivants, hors obligations légales de conservation :
+      <ul>
+        <li>copies du code source projet ;</li>
+        <li>dumps / exports de base de données de production ;</li>
+        <li>fichiers <code>.env</code>, mots de passe, clés API, tokens ;</li>
+        <li>keystores / certificats de signature (une fois exportés et remis) ;</li>
+        <li>éventuelles copies de données personnelles utilisateurs.</li>
+      </ul>
+    </li>
+    <li>Que le compte <strong>Expo / EAS</strong> encore associé à el.elhadji.dieng@gmail.com sera :
+      <ul>
+        <li>☐ transféré / partagé en owner avec le Client, <strong>ou</strong></li>
+        <li>☐ conservé temporairement pour maintenance convenue, puis rétrocédé,</li>
+      </ul>
+      selon accord écrit des parties.
+    </li>
+    <li>Que toute conservation résiduelle strictement nécessaire (preuves de facturation, obligations légales, sauvegarde contractuelle) sera limitée, sécurisée, et non réutilisée à d’autres fins.</li>
+    <li>Que je m’interdis d’exploiter, céder ou republier le code et les assets Bag’up pour un tiers, sauf accord écrit du Client.</li>
+  </ol>
+
+  <h2>Engagement</h2>
+  <p>La présente attestation est établie pour valoir ce que de droit et annexée au dossier de restitution / PV de réception.</p>
+  <p>Fait à _______________, le ____ / ____ / 2026</p>
+
+  <div class="sign-block">
+    <strong>Signature du déclarant (Prestataire)</strong>
+    <img class="sig-img" src="../assets/signature_el_hadji_dieng.png" alt="Signature El Hadji DIENG" />
+    Nom : <strong>El Hadji DIENG</strong>
+  </div>
+  <p class="foot">Bag’up — Attestation de suppression des copies · À signer après remise effective</p>
+</body>
+</html>

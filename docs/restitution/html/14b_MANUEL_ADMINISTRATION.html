@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Manuel d’administration — Bag’up</title>
+  <style>
+    @page { size: A4; margin: 14mm; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 11.5px; line-height: 1.5; color: #111; margin: 0;
+      max-width: 190mm;
+    }
+    h1 { font-size: 20px; color: #0A7070; margin: 0 0 6px; }
+    .meta { color: #4B5563; margin: 0 0 14px; font-size: 11px; }
+    h2 {
+      font-size: 14px; color: #0A7070; margin: 16px 0 6px;
+      border-bottom: 1px solid #E5E7EB; padding-bottom: 3px;
+      break-after: avoid; page-break-after: avoid;
+    }
+    p, li { margin: 0 0 4px; orphans: 3; widows: 3; }
+    ul, ol { padding-left: 18px; margin: 4px 0 10px; }
+    table {
+      width: 100%; border-collapse: collapse; margin: 8px 0 12px; font-size: 10.5px;
+      break-inside: avoid; page-break-inside: avoid;
+    }
+    th, td { border: 1px solid #E5E7EB; padding: 7px 8px; vertical-align: top; }
+    th { background: #E6F7F7; color: #0A7070; }
+    code, pre {
+      font-family: ui-monospace, Menlo, monospace; font-size: 10px;
+      background: #F3F4F6; padding: 1px 4px; border-radius: 3px;
+    }
+    pre {
+      display: block; padding: 8px 10px; margin: 6px 0 10px; white-space: pre-wrap;
+      break-inside: avoid; page-break-inside: avoid;
+    }
+    .warn {
+      background: #FFF7ED; border-left: 3px solid #EA580C;
+      padding: 8px 10px; margin: 8px 0 12px; border-radius: 0 8px 8px 0;
+      break-inside: avoid; page-break-inside: avoid;
+    }
+    .foot { margin-top: 18px; font-size: 10px; color: #6B7280; }
+  </style>
+</head>
+<body>
+  <h1>Manuel d’administration — Bag’up</h1>
+  <p class="meta">
+    <strong>Back-office :</strong> https://admin.bagup.app<br/>
+    <strong>API :</strong> https://admin.bagup.app/api<br/>
+    <strong>Compte projet / transparence :</strong> lanternelabel@gmail.com<br/>
+    <strong>Exception Expo/EAS :</strong> el.elhadji.dieng@gmail.com (à transférer ou partager avec le Client)
+  </p>
+
+  <h2>1. Accès admin</h2>
+  <ol>
+    <li>Ouvrir https://admin.bagup.app</li>
+    <li>Se connecter avec un compte <strong>Administrateur / Staff</strong></li>
+    <li>Ne jamais partager le mot de passe admin en clair hors canal sécurisé</li>
+  </ol>
+  <p>Les comptes admin sont gérés en base (rôle admin/staff).</p>
+
+  <h2>2. Missions principales de l’admin</h2>
+  <table>
+    <tr><th>Module</th><th>Actions</th></tr>
+    <tr><td>Utilisateurs</td><td>Voir clients / prestataires / commerçants, bloquer, vérifier KYC</td></tr>
+    <tr><td>Prestataires</td><td>Valider pièces, adhésion payée, rejeter KYC, motif de rejet</td></tr>
+    <tr><td>Abonnements</td><td>Suivre paiements d’adhésion, impayés, remboursements à traiter</td></tr>
+    <tr><td>Paiements</td><td>Missions / courses (Bictorys), statuts (succès, abandonné…)</td></tr>
+    <tr><td>Missions / Courses</td><td>Superviser litiges, statuts, suivis</td></tr>
+    <tr><td>Contenu</td><td>Bannières, promos, message de mise à jour app (<code>APP_LATEST_VERSION</code>)</td></tr>
+    <tr><td>Marketplace</td><td>Boutiques, commandes, modération selon activation</td></tr>
+  </table>
+
+  <h2>3. Validation prestataire (KYC)</h2>
+  <p>Parcours type :</p>
+  <ol>
+    <li>Inscription + OTP</li>
+    <li>Paiement adhésion</li>
+    <li>Admin vérifie documents</li>
+    <li>Validation → accès app</li>
+    <li>En cas de rejet : motif visible côté app + éventuel remboursement à marquer</li>
+  </ol>
+  <p>Anti-Gaspi peut suivre un parcours « vérification seule » selon configuration.</p>
+
+  <h2>4. Hébergement &amp; exploitation</h2>
+  <table>
+    <tr><th>Élément</th><th>Détail</th></tr>
+    <tr><td>VPS</td><td>Hostinger — serveur prod Bag’up</td></tr>
+    <tr><td>Process API</td><td>PM2 (<code>bagup-api</code>)</td></tr>
+    <tr><td>Admin</td><td>Build Vite servi sur le VPS</td></tr>
+    <tr><td>BDD</td><td>PostgreSQL (Prisma)</td></tr>
+    <tr><td>Domaines</td><td><code>bagup.app</code> / <code>admin.bagup.app</code> (+ DNS / SSL)</td></tr>
+  </table>
+  <p><strong>Compte hébergeur / domaines / DNS / SSL :</strong> gérés sous lanternelabel@gmail.com.</p>
+  <p>Redémarrage API (ops) :</p>
+  <pre>pm2 restart bagup-api --update-env</pre>
+  <p>Mise à jour version store annoncée dans l’app :</p>
+  <ul>
+    <li>Variable <code>APP_LATEST_VERSION</code> sur le serveur (ex. <code>1.0.23</code>)</li>
+  </ul>
+
+  <h2>5. Stores &amp; builds</h2>
+  <table>
+    <tr><th>Plateforme</th><th>Identifiant</th><th>Compte</th></tr>
+    <tr><td>Google Play</td><td><code>sn.bagup.app</code></td><td>lanternelabel@gmail.com</td></tr>
+    <tr><td>App Store</td><td>ID <code>6793175800</code></td><td>lanternelabel@gmail.com</td></tr>
+    <tr><td>Expo / EAS</td><td>projet <code>@elbambiste/bagup</code></td><td>el.elhadji.dieng@gmail.com</td></tr>
+  </table>
+  <p><strong>Android keystore :</strong> géré via EAS. Export / partage des credentials de signature à conserver côté Client (lanterne).</p>
+  <p>Publication typique :</p>
+  <pre>cd bagup-mobile
+npx eas build --platform all --profile production --auto-submit</pre>
+  <p>OTA (correctifs JS sans rebuild store) :</p>
+  <pre>npx eas update --channel production --platform android --message "…"
+npx eas update --channel production --platform ios --message "…"</pre>
+
+  <h2>6. Services tiers</h2>
+  <p>Tous configurés / rattachés à <strong>lanterne</strong> sauf Expo :</p>
+  <table>
+    <tr><th>Service</th><th>Usage</th><th>Compte</th></tr>
+    <tr><td>Bictorys / Wave / OM</td><td>Paiements</td><td>lanternelabel</td></tr>
+    <tr><td>Google Maps / Places</td><td>Cartes &amp; adresses</td><td>lanternelabel</td></tr>
+    <tr><td>Firebase (si actif)</td><td>Push</td><td>lanternelabel</td></tr>
+    <tr><td>Expo / EAS</td><td>Builds + OTA + keystore</td><td>el.elhadji.dieng@gmail.com</td></tr>
+  </table>
+  <div class="warn"><strong>À finaliser :</strong> inviter lanternelabel@gmail.com en owner du projet Expo et exporter le keystore Android.</div>
+
+  <h2>7. Fichiers <code>.env</code> et secrets</h2>
+  <ul>
+    <li><strong>Non publiés sur GitHub</strong></li>
+    <li>Disponibles pour le Client via la boîte <strong>lanternelabel@gmail.com</strong> et/ou dossier sécurisé de restitution</li>
+    <li>Sur clé USB : uniquement si le support est chiffré / remis en main propre</li>
+  </ul>
+  <p>Après restitution : <strong>changer tous les mots de passe et régénérer les clés API</strong>.</p>
+
+  <h2>8. Sauvegardes recommandées</h2>
+  <ol>
+    <li>Dump PostgreSQL régulier</li>
+    <li>Copie <code>.env</code> chiffrée hors serveur</li>
+    <li>Accès EAS / stores documentés</li>
+    <li>Snapshot VPS Hostinger</li>
+  </ol>
+
+  <p class="foot">Manuel d’administration — restitution Bag’up — septembre 2026<br/>
+  Contacts : lanternelabel@gmail.com · Expo : el.elhadji.dieng@gmail.com</p>
+</body>
+</html>
